@@ -16,8 +16,26 @@ Prisma generate? Gör det lätt att förstå helt enkelt.
 
 
 ## För att utveckla
-Först kör npm i, sen npx prisma generate om prisma skulle gnälla.
 
-Hur gör man med databasen?
-Docker?
+Installera [Docker Compose](https://docs.docker.com/compose/install) om du inte redan har det.
 
+### Starta webbsidan
+
+```console
+docker compose --file dev-docker-compose.yml up -d
+```
+
+> [!TIP]
+> Om du kör Linux uppdateras sidan automatiskt när du ändrar källkoden.
+
+### Titta på loggarna
+
+```console
+docker logs --follow nollkit-nextjs-1
+```
+
+### Stäng av webbsidan
+
+```compose
+docker compose --file dev-docker-compose.yml down
+```
