@@ -10,12 +10,14 @@ export default function Countdown({ criticalDates }: { criticalDates: string[] }
     seconds: number,
   }
 
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>({
-    days: 100,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  })
+  const defaultTimeLeft: TimeLeft = {
+    days: NaN,
+    hours: NaN,
+    minutes: NaN,
+    seconds: NaN,
+  }
+
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(defaultTimeLeft)
 
   const ctx = useContext(YearContext)
 
@@ -26,7 +28,10 @@ export default function Countdown({ criticalDates }: { criticalDates: string[] }
   function getTimeLeft(year: string): TimeLeft {
     const todaysDate = new Date()
 
-    const msDelta = new Date(findCriticalDate(criticalDates, year)).getTime() - todaysDate.getTime()
+    const criticalDate = findCriticalDate(criticalDates, year)
+    if (criticalDate === "")
+      return defaultTimeLeft
+    const msDelta = new Date(criticalDate).getTime() - todaysDate.getTime()
 
     const daysLeft = Math.floor(msDelta / (86_400_000))
     const hoursLeft = Math.floor((msDelta % 86_400_000) / 3_600_000)

@@ -21,7 +21,7 @@ export const getServerSideProps = async () => {
 }
 
 interface ModulPageProps {
-  text: PageText
+  text?: PageText
 }
 
 const Modul: NextPage<ModulPageProps> = ({ text }) => {
@@ -32,7 +32,7 @@ const Modul: NextPage<ModulPageProps> = ({ text }) => {
     <>
       <Page blackout>
         <PageInfo heading="Nollmodulen">
-          {text.content}
+          {text?.content}
         </PageInfo>
         <Button action={() => {location.href="/modul/" + ctx.year + ".pdf"}}>
           Här hittar du årets modul

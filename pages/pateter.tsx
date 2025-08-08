@@ -33,8 +33,8 @@ export const getServerSideProps = async () => {
 };
 
 interface PateterProps {
-  text: PageText;
-  allCommittees: CommitteeWithMembers[];
+  text?: PageText;
+  allCommittees?: CommitteeWithMembers[];
 }
 
 const Pateter: NextPage<PateterProps> = ({ text, allCommittees }) => {
@@ -71,7 +71,7 @@ const Pateter: NextPage<PateterProps> = ({ text, allCommittees }) => {
           onScroll={() => handleScroll()}
         >
           <div className="snap-start h-full flex flex-col items-center w-10/12 lg:w-3/4 min-h-screen">
-            <PageInfo heading="Pateter">{text.content}</PageInfo>
+            <PageInfo heading="Pateter">{text?.content}</PageInfo>
             <Divider />
             <div
               className={`absolute bottom-10 flex flex-col gap-4 items-center cursor-pointer py-2 transition duration-700 ${
@@ -91,7 +91,7 @@ const Pateter: NextPage<PateterProps> = ({ text, allCommittees }) => {
           </div>
           {/* used to to know whether user has scrolled far enough */}
           <div id="boundary"></div>{" "}
-          {allCommittees.map((committee) => (
+          {allCommittees?.map((committee) => (
             <div key={committee.year} className="snap-start">
               <Precursor committee={committee} />
             </div>
