@@ -103,7 +103,9 @@ const Admin: NextPage<AdminProps> = (props: AdminProps) => {
 
               <div className="flex flex-col gap-4 my-4">
                 <Button action={() => {
-                  const year = committees[0].year + 1
+                  const year = committees.length > 0
+                    ? committees[0].year + 1
+                    : new Date().getFullYear()
                   setCommittees([{
                     year: year,
                     firstDay: year + "-01-01T00:00:00",
