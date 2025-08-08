@@ -21,12 +21,16 @@ export default function ImageWithFallback(props: ImageWithFallbackProps) {
 
   return useFallback ?
     // If fallbacksrc is not set, don't render anything
-    props.fallbacksrc ? (
-      <Image {...props} src={props.fallbacksrc} />
+    (
+      props.fallbacksrc &&
+      typeof props.fallbacksrc === 'string' &&
+      props.fallbacksrc.trim() !== ''
+    ) ? (
+      <Image {...props} unoptimized src={props.fallbacksrc} />
     ) : (
       null
     )
   : (
-    <Image {...props} onError={() => setUseFallback(true)}/>
+    <Image {...props} unoptimized onError={() => setUseFallback(true)}/>
   )
 }
