@@ -19,22 +19,42 @@ Prisma generate? Gör det lätt att förstå helt enkelt.
 
 Installera [Docker Compose](https://docs.docker.com/compose/install) om du inte redan har det.
 
-### Starta webbsidan
+### Starta databasen
 
 ```console
 docker compose --file dev-docker-compose.yml up -d
 ```
 
-> [!TIP]
-> Om du kör Linux uppdateras sidan automatiskt när du ändrar källkoden.
+> [!WARNING]
+> Om du får ett felmeddelande, [kontrollera att Docker körs](https://docs.docker.com/engine/daemon/troubleshoot/).
 
-### Titta på loggarna
+### Förbered webbsidan
+
+1. Skapa filen `.env` med följande innehåll:
+
+    ```env
+    DATABASE_URL=mongodb://localhost:27017/db
+    PASSWORD=123
+    ```
+
+2. Kör dessa kommandon:
+
+    ```console
+    npm install -D
+    npx prisma generate
+    ```
+
+### Starta webbsidan
 
 ```console
-docker logs --follow nollkit-nextjs-1
+npm run dev
 ```
 
-### Stäng av webbsidan
+> [!TIP]
+> Sidan uppdateras automatiskt när du ändrar källkoden.
+
+
+### Stäng av databasen
 
 ```compose
 docker compose --file dev-docker-compose.yml down
