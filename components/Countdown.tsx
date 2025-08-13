@@ -11,10 +11,10 @@ export default function Countdown({ criticalDates }: { criticalDates: string[] }
   }
 
   const defaultTimeLeft: TimeLeft = {
-    days: NaN,
-    hours: NaN,
-    minutes: NaN,
-    seconds: NaN,
+    days: 100,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
   }
 
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(defaultTimeLeft)
