@@ -17,12 +17,13 @@ Prisma generate? Gör det lätt att förstå helt enkelt.
 
 ## För att utveckla
 
-Installera [Docker Compose](https://docs.docker.com/compose/install) om du inte redan har det.
+Installera [Docker Compose](https://docs.docker.com/compose/install) och
+[Node.js®](https://nodejs.org/en/download) om du inte redan har det.
 
 ### Starta databasen
 
 ```console
-docker compose --file dev-docker-compose.yml up -d
+docker compose --file dev/docker-compose.yml up -d
 ```
 
 > [!WARNING]
@@ -53,9 +54,8 @@ npm run dev
 > [!TIP]
 > Sidan uppdateras automatiskt när du ändrar källkoden.
 
-
 ### Stäng av databasen
 
 ```compose
-docker compose --file dev-docker-compose.yml down
+docker compose --file dev/docker-compose.yml down
 ```
