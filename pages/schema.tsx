@@ -12,6 +12,7 @@ import momentPlugin from "@fullcalendar/moment";
 import momentTimezonePlugin from "@fullcalendar/moment-timezone";
 import React, { useContext } from "react";
 import YearContext from "../util/YearContext";
+import CalendarSubscribeButton from "../components/CalendarSubscribeButton"
 
 export const getServerSideProps = async () => {
   const calenderLinks = await prisma.links.findMany({
@@ -168,6 +169,12 @@ const Schema: NextPage<SchemaProps> = ({
               ${fullcalenderStyling}
             `}
           </style>
+          <span className="flex justify-end mt-4">
+            <CalendarSubscribeButton
+              children="Lägg till i Kalender"
+              disabled={!stringifiedCalendars.length}
+            />
+          </span>
         </div>
       </Page>
     </>
