@@ -45,7 +45,13 @@ docker compose --file dev/docker-compose.yml up -d
     ```console
     npm install -D
     npx prisma generate
+    node data.js
     ```
+
+    > [!NOTE]
+    > `npm install -D` installerar alla Node dependencies, inklusive dependencies för utveckling.  
+    > `npx prisma generate` genererar koden för Prisma klienten.  
+    > `node data.js` skapar startdata i databasen.  
 
 ### Starta webbsidan
 

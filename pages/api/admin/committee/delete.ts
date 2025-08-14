@@ -19,13 +19,19 @@ export default async function add(req: NextApiRequest, res: NextApiResponse) {
     },
   })
   
+  const deleteTimeline = prisma.timeLineEvent.deleteMany({
+    where: {
+      year: year.toString()
+    },
+  })
+  
   const deleteCommittee = prisma.committee.delete({
     where: {
       year: year
     },
   })
   
-  const transaction = await prisma.$transaction([deleteMembers, deleteCommittee])
+  const transaction = await prisma.$transaction([deleteMembers, deleteTimeline, deleteCommittee])
 
   res.json(transaction);
 }
