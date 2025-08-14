@@ -12,7 +12,9 @@ const CalendarSubscribeButton = (props: CalendarSubscribeButtonProps) => {
     }
 
     return (
-      <Button {...props} action={subscribeToCalendar} color={props.color ?? "bg-cyan-400"} />
+      <>
+        <Button {...props} action={subscribeToCalendar} color={props.color ?? "bg-cyan-400"} />
+      </>
     )
 }
 
