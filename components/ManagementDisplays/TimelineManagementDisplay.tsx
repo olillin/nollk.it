@@ -94,60 +94,66 @@ export default function TextManagementDisplay(props: TimelineManagementDisplayPr
       }
       </div>
 
-      <div className="flex gap-4">
-        <select id="category-select" className="p-1 rounded-md" style={{ backgroundColor: shownCategories[0]?.color ?? "" }} onChange={
-          e => {
-            e.target.style.backgroundColor = getCategoryColor(e.target.value) ?? ""
-          }
-        }>
-          {
-            shownCategories.map(category => {
-              return <option style={{ backgroundColor: category.color }} key={category.title} value={category.title}>
-                {category.title}
-              </option>
-            })
-          }
-        </select>
-
-        <Button action={() => {
-          setShownEvents([...shownEvents, {
-            id: "tempid",
-            categoryId: (document.getElementById("category-select") as HTMLSelectElement).value,
-            date: "",
-            text: "",
-            link: "",
-            year: selectedYear.toString()
-          }])
-        }
-        }>
-          Lägg till
-        </Button>
-      </div>
-
-      <div className="mt-8">
-        <Button color="bg-green-500" action={() => {
-          fetch('/api/admin/timeline/update', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(
-              {
-                events: shownEvents,
-                year: selectedYear
+      {
+        shownCategories.length === 0
+          ? <p>Inga kategorier tillagda. Lägg till en kategori nedan.</p>
+          : <>
+            <div className="flex gap-4">
+              <select id="category-select" className="p-1 rounded-md" style={{ backgroundColor: shownCategories[0]?.color ?? "" }} onChange={
+                e => {
+                  e.target.style.backgroundColor = getCategoryColor(e.target.value) ?? ""
+                }
+              }>
+                {
+                  shownCategories.map(category => {
+                    return <option style={{ backgroundColor: category.color }} key={category.title} value={category.title}>
+                      {category.title}
+                    </option>
+                  })
+                }
+              </select>
+      
+              <Button action={() => {
+                setShownEvents([...shownEvents, {
+                  id: "tempid",
+                  categoryId: (document.getElementById("category-select") as HTMLSelectElement).value,
+                  date: "",
+                  text: "",
+                  link: "",
+                  year: selectedYear.toString()
+                }])
               }
-            )
-          }).then(res => {
-            if (res.status === 200) {
-              alert("Sparat!")
-            } else {
-              alert("Något gick fel")
-            }
-          })
-        }}>
-          Spara
-        </Button>
-      </div>
+              }>
+                Lägg till
+              </Button>
+            </div>
+      
+            <div className="mt-8">
+              <Button color="bg-green-500" action={() => {
+                fetch('/api/admin/timeline/update', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(
+                    {
+                      events: shownEvents,
+                      year: selectedYear
+                    }
+                  )
+                }).then(res => {
+                  if (res.status === 200) {
+                    alert("Sparat!")
+                  } else {
+                    alert("Något gick fel")
+                  }
+                })
+              }}>
+                Spara
+              </Button>
+            </div>
+          </>
+      }
     </section>
 
     <section className="mb-8">
@@ -162,6 +168,7 @@ export default function TextManagementDisplay(props: TimelineManagementDisplayPr
                   <div className="p-1 px-2" style={{ backgroundColor: getCategoryColor(category.title) }}>{category.title}</div>
                   <Button color="bg-red-500" action={() => {
                     const usedEvent = props.timelineEvents.find(event => event.categoryId === category.title)
+                      ?? shownEvents.find(event => event.categoryId === category.title)
                     if (usedEvent) {
                       alert(`Kan inte ta bort kategori, används år ${usedEvent.year} med text "${usedEvent.text}"`)
                       return
