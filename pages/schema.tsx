@@ -183,7 +183,7 @@ const Schema: NextPage<SchemaProps> = ({
             modalOpen
               ? <CalendarSubscribeModal
                 onClose={() => setModalOpen(false)}
-                url={window.location.protocol+ '//' + window.location.host + "/api/schema.ics"}
+                url={'webcal://' + window.location.host + "/api/schema.ics"}
               />
               : <></>
           }

@@ -4,7 +4,7 @@ import Modal from './Modal'
 type CalendarSubscribeModalProps = {
     url: string
     onClose: () => void
-    background: string
+    background?: string
 }
 
 const CalendarSubscribeModal = (props: CalendarSubscribeModalProps) => {
