@@ -12,7 +12,6 @@ import { prisma } from '../prisma/prismaclient'
 import { TimelineEventWithCategory } from "../types"
 
 export const getServerSideProps = async () => {
-
   const mottagningenText = (await prisma.pageText.findFirst({
     where: {
       page: "mottagningen"
@@ -50,9 +49,9 @@ const parseDateTime = (dateString: string) => {
 }
 
 interface MottagningenProps {
-  mottagningenText: PageTextType
-  timelineData: TimelineEventWithCategory[]
-  faqItems: Faq[]
+  mottagningenText?: PageTextType
+  timelineData?: TimelineEventWithCategory[]
+  faqItems?: Faq[]
 }
 
 const TimelineItem = ({ data }: { data: TimelineEventWithCategory }) => (
@@ -96,14 +95,14 @@ const Timeline = ({ data }: { data: TimelineEventWithCategory[] }) => {
 const Mottagningen: NextPage<MottagningenProps> = ({ mottagningenText, timelineData, faqItems }) => {
 
   const year = useContext(YearContext).year
-  const filteredTimelineData = timelineData.filter((data) => data.year === year)
+  const filteredTimelineData = (timelineData ?? []).filter((data) => data.year === year)
 
   return (
     <>
       <Page blackout>
 
         <PageInfo heading="Hej Nollan!">
-          {mottagningenText.content}
+          {mottagningenText?.content}
         </PageInfo>
 
         <Divider />
@@ -119,7 +118,7 @@ const Mottagningen: NextPage<MottagningenProps> = ({ mottagningenText, timelineD
           Frequently Asked Questions
         </div>
         <div className="flex flex-col gap-4 lg:w-1/2 my-8">
-          {faqItems.map((faqItem, index) => (
+          {faqItems?.map((faqItem, index) => (
             <div key={index}>
               <Collapsible title={faqItem.question} content={faqItem.answer} />
             </div>

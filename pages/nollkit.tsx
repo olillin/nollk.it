@@ -25,8 +25,8 @@ export const getServerSideProps = async () => {
 }
 
 interface NollkitProps {
-  allMembers: Member[]
-  text: PageText
+  allMembers?: Member[]
+  text?: PageText
 }
 
 const Nollkit: NextPage<NollkitProps> = ({ allMembers, text }) => {
@@ -43,7 +43,7 @@ const Nollkit: NextPage<NollkitProps> = ({ allMembers, text }) => {
 
       <Page blackout>
         <PageInfo heading="Vi är NollKIT">
-          {text.content}  
+          {text?.content}  
         </PageInfo>
         <Divider />
 
@@ -54,7 +54,7 @@ const Nollkit: NextPage<NollkitProps> = ({ allMembers, text }) => {
           </div>
 
           {
-            allMembers.filter(member => member.year.toString() === ctx.year).sort( (a, b) => a.orderInImage - b.orderInImage).map((member, index) => {
+            allMembers?.filter(member => member.year.toString() === ctx.year).sort( (a, b) => a.orderInImage - b.orderInImage).map((member, index) => {
               return (
                 <div key={member.role} className="grid grid-cols-5 gap-5 mb-8">
 

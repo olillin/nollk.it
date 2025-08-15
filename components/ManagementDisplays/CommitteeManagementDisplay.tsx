@@ -6,10 +6,13 @@ import TextInput from "../admin/TextInput"
 import Accordion from "../admin/Accordion"
 
 interface CommitteeManagementDisplayProps {
-  committee: CommitteeWithMembers
+  committee?: CommitteeWithMembers
 }
 
 export default function CommitteeManagementDisplay({ committee }: CommitteeManagementDisplayProps) {
+  if (!committee) {
+    return <p>Skapa en kommittée för att komma igång.</p>
+  }
 
   const [members, setMembers] = useState(committee.members)
   let newMembers = [...members]
@@ -155,7 +158,7 @@ export default function CommitteeManagementDisplay({ committee }: CommitteeManag
               "Content-Type": "application/json",
             },
             body: JSON.stringify({ year: committee.year }),
-          }).then(() => {
+          }).then(() => 
             fetch("/api/admin/committee/add", {
               method: "POST",
               headers: {
@@ -163,7 +166,13 @@ export default function CommitteeManagementDisplay({ committee }: CommitteeManag
               },
               body: JSON.stringify(committeeWithMembers),
             })
-          }).then(() => alert("Sparat " + committee.year + " till databasen!"))
+          ).then(res => {
+            if (res.status === 200) {
+              alert("Sparat " + committee.year + " till databasen!")
+            } else {
+              alert("Något gick fel")
+            }
+          })
         }}>
           Spara till databasen
         </Button>

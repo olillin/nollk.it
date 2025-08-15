@@ -1,0 +1,9 @@
+#!/bin/sh
+# Initiate single-node replica set if not already running
+mongosh --quiet --eval '
+  try {
+    rs.status()
+  } catch (e) {
+    rs.initiate({_id:"rs0", members:[{_id:0, host:"localhost:27017"}]})
+  }
+'

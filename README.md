@@ -12,12 +12,3 @@ Döp filerna till `år.pdf` eller `år.ttf`.
 
 För att starta projektet bygg docker nånting nånting
 Prisma generate? Gör det lätt att förstå helt enkelt.
-
-
-
-## För att utveckla
-Först kör npm i, sen npx prisma generate om prisma skulle gnälla.
-
-Hur gör man med databasen?
-Docker?
-

@@ -20,7 +20,10 @@ export const getServerSideProps = async () => {
     },
   })
 
-  const mottagningEvents = await ical.async.fromURL(mottagningenEventsLink?.url ?? "")
+  const mottagningEventsUrl = mottagningenEventsLink?.url
+  const mottagningEvents = mottagningEventsUrl !== undefined
+    ? await ical.async.fromURL(mottagningEventsUrl)
+    : undefined
 
   return {
     props: { unparsedEvents: JSON.stringify(mottagningEvents ?? {}), criticalDates: allStartDates }
