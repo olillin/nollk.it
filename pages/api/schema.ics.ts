@@ -1,6 +1,48 @@
-import { Calendar, parseCalendar } from 'iamcal'
+import { Calendar, ONE_MINUTE_MS, parseCalendar } from 'iamcal'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '../../prisma/prismaclient'
+
+/** Represents the default calendar cache expiration time, in minutes. */
+const DEFAULT_CALENDAR_CACHE_EXPIRATION = 180 // Three hours in minutes
+
+/** Represents the calendar cache expiration time, in minutes. */
+const calendarCacheExpiration = getCalendarCacheExpiration()
+
+function getCalendarCacheExpiration(
+  defaultMinutes: number = DEFAULT_CALENDAR_CACHE_EXPIRATION
+) {
+  try {
+    if (process.env.CALENDAR_CACHE_EXPIRATION) {
+      return parseInt(process.env.CALENDAR_CACHE_EXPIRATION)
+    } else {
+      return defaultMinutes
+    }
+  } catch {
+    console.warn(
+      `Failed to parse calendar cache expiration "${process.env.CALENDAR_CACHE_EXPIRATION}", ` +
+      `should be an integer representing the time in minutes. `+ 
+      `Using default time of ${defaultMinutes} minutes.`
+    )
+    return defaultMinutes
+  }
+}
+
+let cachedCalendarBody: string | null = null
+let cachedCalendarTime: number = 0
+
+/** Get the cached calendar body, or nothing if unset or expired. */
+function getCachedCalendarBody(): string | null {
+  const cacheAgeMinutes = (Date.now() - cachedCalendarTime) / ONE_MINUTE_MS
+  console.log(`Age: ${cacheAgeMinutes}`)
+  const isExpired = cacheAgeMinutes >= calendarCacheExpiration
+  return isExpired ? null : cachedCalendarBody
+}
+
+/** Save a calendar body to the cache and save the cached time. */
+function cacheCalendarBody(calendarBody: string) {
+  cachedCalendarBody = calendarBody
+  cachedCalendarTime = Date.now()
+}
 
 async function getCalendarUrls(): Promise<string[]> {
   const calendarLinks = await prisma.links.findMany({
@@ -51,8 +93,10 @@ function mergeCalendars(calendars: Calendar[]): Calendar {
   return mergedCalendar
 }
 
-function createMergedCalendar(): Promise<Calendar> {
-  return getCalendarUrls()
+async function createMergedCalendar(
+  productId: string
+): Promise<Calendar> {
+  const calendar = await getCalendarUrls()
     .then(urls =>
       Promise.all(
         urls.map(url => {
@@ -65,6 +109,26 @@ function createMergedCalendar(): Promise<Calendar> {
         calendars.filter(calendar => calendar != undefined)
       )
     })
+  calendar.setProductId(productId)
+  return calendar
+}
+
+/**
+ * Create a merged calendar, or return the cached calendar if it exists. And cache
+ * it if creating a new one.
+ * @param productId The product id of the calendar if creating a new one.
+ * @returns The new merged calendar, or the cached calendar if it exists and is not expired.
+ */
+async function createCalendarBodyWithCache(productId: string): Promise<string> {
+  const cached = getCachedCalendarBody()
+  console.log(`Cached: ` + !!cached)
+  if (cached) {
+    return cached
+  }
+  const mergedCalendar = await createMergedCalendar(productId)
+  const calendarBody =  mergedCalendar.serialize()
+  cacheCalendarBody(calendarBody)
+  return calendarBody
 }
 
 export default async function handler(
@@ -72,14 +136,11 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const productId = '-//Teknologsektionen Informationsteknik//nollk.it//SV'
-  const calendar: Calendar = await createMergedCalendar()
-  .then(merged => merged.setProductId(productId))
-  .catch(reason => {
-    console.warn(`Failed to create merged calendar: ${reason}`)
-    return new Calendar(productId)
-  })
-  
-  const calendarBody = calendar.serialize()
+  const calendarBody: string = await createCalendarBodyWithCache(productId)
+    .catch(reason => {
+      console.warn(`Failed to create merged calendar: ${reason}`)
+      return new Calendar(productId).serialize()
+    })
   
   res.setHeader('Content-Type', 'text/calendar')
   res.setHeader('Content-Disposition', 'attachment; filename=schema.ics')
