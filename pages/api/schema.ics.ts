@@ -29,19 +29,30 @@ function getCalendarCacheExpiration(
 
 let cachedCalendarBody: string | null = null
 let cachedCalendarTime: number = 0
+let cachedCalendarUrls: string = ''
 
 /** Get the cached calendar body, or nothing if unset or expired. */
-function getCachedCalendarBody(): string | null {
+async function getCachedCalendarBody(): Promise<string | null> {
   const cacheAgeMinutes = (Date.now() - cachedCalendarTime) / ONE_MINUTE_MS
-  console.log(`Age: ${cacheAgeMinutes}`)
-  const isExpired = cacheAgeMinutes >= calendarCacheExpiration
-  return isExpired ? null : cachedCalendarBody
+  if (cacheAgeMinutes >= calendarCacheExpiration) {
+    // Cache invalidated by expiration time
+    return null
+  }
+
+  const calendarUrls = await (await getCalendarUrls()).join()
+  if (calendarUrls != cachedCalendarUrls) {
+    // Cache invalidated by changed URLs
+    return null
+  }
+
+  return cachedCalendarBody
 }
 
 /** Save a calendar body to the cache and save the cached time. */
-function cacheCalendarBody(calendarBody: string) {
+async function cacheCalendarBody(calendarBody: string) {
   cachedCalendarBody = calendarBody
   cachedCalendarTime = Date.now()
+  cachedCalendarUrls = (await getCalendarUrls()).join()
 }
 
 async function getCalendarUrls(): Promise<string[]> {
@@ -120,8 +131,7 @@ async function createMergedCalendar(
  * @returns The new merged calendar, or the cached calendar if it exists and is not expired.
  */
 async function createCalendarBodyWithCache(productId: string): Promise<string> {
-  const cached = getCachedCalendarBody()
-  console.log(`Cached: ` + !!cached)
+  const cached = await getCachedCalendarBody()
   if (cached) {
     return cached
   }
