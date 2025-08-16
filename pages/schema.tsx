@@ -176,7 +176,7 @@ const Schema: NextPage<SchemaProps> = ({
             <Button
               children="Lägg till i Kalender"
               disabled={!stringifiedCalendars.length}
-              action={() => setModalOpen(true)}
+              action={() => setModalOpen(!modalOpen)}
             />
           </span>
           {
