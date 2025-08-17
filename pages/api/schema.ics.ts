@@ -116,9 +116,12 @@ async function createMergedCalendar(
       )
     )
     .then(calendars => {
-      return mergeCalendars(
-        calendars.filter(calendar => calendar != undefined)
-      )
+      const isCalendar = (
+        maybeCalendar: Calendar | undefined
+      ): maybeCalendar is Calendar => calendar !== undefined
+      
+      const filteredCalendars: Calendar[] = calendars.filter(isCalendar)
+      return mergeCalendars(filteredCalendars)
     })
   calendar.setProductId(productId)
   return calendar
