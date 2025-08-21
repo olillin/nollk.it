@@ -10,8 +10,10 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import momentPlugin from "@fullcalendar/moment";
 import momentTimezonePlugin from "@fullcalendar/moment-timezone";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import YearContext from "../util/YearContext";
+import Button from "../components/Button"
+import CalendarSubscribeModal from "../components/CalendarSubscribeModal"
 
 export const getServerSideProps = async () => {
   const calenderLinks = await prisma.links.findMany({
@@ -96,6 +98,8 @@ const Schema: NextPage<SchemaProps> = ({
 
   const ctx = useContext(YearContext);
 
+  const [modalOpen, setModalOpen] = useState(false)
+
   const getFirstDayDate = (year: string): string => {
     return (
       firstdayDates.find((d) => d.includes(year)) ??
@@ -168,7 +172,23 @@ const Schema: NextPage<SchemaProps> = ({
               ${fullcalenderStyling}
             `}
           </style>
+          <span className="flex justify-end mt-4">
+            <Button
+              children="Lägg till i Kalender"
+              disabled={!stringifiedCalendars.length}
+              action={() => setModalOpen(!modalOpen)}
+            />
+          </span>
+          {
+            modalOpen
+              ? <CalendarSubscribeModal
+                onClose={() => setModalOpen(false)}
+                url={'webcal://' + window.location.host + "/api/schema.ics"}
+              />
+              : <></>
+          }
         </div>
+
       </Page>
     </>
   );
